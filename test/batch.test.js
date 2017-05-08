@@ -32,8 +32,8 @@ const testJob = {
   }
 }
 
-describe('lib.batch', () => {
-  describe('.jobs', () => {
+global.describe('lib.batch', () => {
+  global.describe('.jobs', () => {
     const testJobName = testJob.metadata.name
 
     beforeTesting('int', common.changeName)
@@ -45,7 +45,7 @@ describe('lib.batch', () => {
         .reply(200, testJob)
     })
 
-    it('can POST and GET', done => {
+    global.it('can POST and GET', done => {
       async.series([
         next => common.batch.ns.jobs.post({ body: testJob }, next),
         next => common.batch.ns.jobs.get(testJobName, next)

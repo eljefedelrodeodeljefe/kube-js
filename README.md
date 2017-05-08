@@ -1,15 +1,15 @@
-# kubernetes-client
+# kube-js
 
-[![Build Status](https://travis-ci.org/godaddy/kubernetes-client.svg?branch=master)](https://travis-ci.org/godaddy/kubernetes-client)
+[![Build Status](https://travis-ci.org/eljefeldelrodeodeljefe/kubernetes-client.svg?branch=master)](https://travis-ci.org/eljefeldelrodeodeljefe/kubernetes-client)
 
-Simplified [Kubernetes API](http://kubernetes.io/) client for Node.js.
+Simplified, lightweight [Kubernetes API](http://kubernetes.io/) client with some useful extensions for Nod.js.
 
 ## Installation
 
 Install via npm:
 
 ```console
-$ npm i kubernetes-client --save
+$ npm i kube-js --save
 ```
 
 ## Examples

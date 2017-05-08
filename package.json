@@ -1,7 +1,7 @@
 {
-  "name": "kubernetes-client",
+  "name": "kube-js",
   "version": "0.1.0",
-  "description": "Simplified, lighweight Kubernetes API client with some useful extensions.",
+  "description": "Simplified, lightweight Kubernetes API client with some useful extensions.",
   "main": "lib/index.js",
   "scripts": {
     "check-coverage": "istanbul check-coverage",
@@ -10,17 +10,16 @@
     "jsdoc": "jsdoc -d doc lib",
     "jscs": "standard lib/ test/",
     "lint": "standard lib/ test/",
-    "release": "standard-version --tag-prefix=''",
     "test": "mocha",
     "test-integration": "TESTING=int mocha -t ${TIMEOUT:-30000} test"
   },
-  "repository": "godaddy/kubernetes-client",
+  "repository": "eljefeldelrodeodeljefe/kubernetes-client",
   "keywords": [
     "kubernetes",
     "kubectl",
     "containers"
   ],
-  "author": "Robert Lindstaedt",
+  "author": "Robert Jefe Lindstaedt <robert.lindstaedt@gmail.com>",
   "license": "MIT",
   "engines": {
     "node": ">=4.2.0"
@@ -38,7 +37,6 @@
   "devDependencies": {
     "assume": "^1.4.1",
     "eslint": "^3.19.0",
-    "godaddy-style": "^3.1.5",
     "istanbul": "^0.4.3",
     "jsdoc": "^3.4.0",
     "mocha": "^2.5.3",

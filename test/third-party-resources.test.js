@@ -51,8 +51,8 @@ function createNewResource (cb) {
   })
 }
 
-describe('lib.ThirdPartyResource', () => {
-  describe('.addResource', () => {
+global.describe('lib.ThirdPartyResource', () => {
+  global.describe('.addResource', () => {
     only('unit', 'adds a BaseObject globally and to default namespace', () => {
       common.thirdPartyResources.addResource('newresources')
       assume(common.thirdPartyResources.newresources).is.truthy()
@@ -60,7 +60,7 @@ describe('lib.ThirdPartyResource', () => {
     })
   })
 
-  describe('.newresources', () => {
+  global.describe('.newresources', () => {
     beforeTesting('int', done => {
       createNewResource(done)
     })
@@ -68,14 +68,14 @@ describe('lib.ThirdPartyResource', () => {
       common.extensions.thirdpartyresources.delete(newResource.metadata.name, done)
     })
 
-    describe('.get', () => {
+    global.describe('.get', () => {
       beforeTesting('unit', () => {
         nock(common.thirdPartyResources.url)
           .get(`${common.thirdPartyResources.path}/newresources`)
           .reply(200, { kind: 'NewResourceList' })
       })
 
-      it('returns NewSourceList', done => {
+      global.it('returns NewSourceList', done => {
         common.thirdPartyResources.addResource('newresources')
         common.thirdPartyResources.newresources.get((err, results) => {
           assume(err).is.falsy()
@@ -85,7 +85,7 @@ describe('lib.ThirdPartyResource', () => {
       })
     })
 
-    describe('.post', () => {
+    global.describe('.post', () => {
       beforeTesting('unit', () => {
         nock(common.thirdPartyResources.url)
           .post(`/apis/${common.thirdPartyDomain}/v1/namespaces/${common.currentName}/newresources`)
@@ -94,7 +94,7 @@ describe('lib.ThirdPartyResource', () => {
           .reply(200, { metadata: { name: 'test' } })
       })
 
-      it('creates a resources', done => {
+      global.it('creates a resources', done => {
         common.thirdPartyResources
           .ns
           .newresources
