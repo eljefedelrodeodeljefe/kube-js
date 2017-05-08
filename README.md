@@ -1,6 +1,4 @@
-# kube-js
-
-[![Build Status](https://travis-ci.org/eljefeldelrodeodeljefe/kube-js.svg?branch=master)](https://travis-ci.org/eljefeldelrodeodeljefe/kube-js)
+# kube-js [![Build Status](https://travis-ci.org/eljefedelrodeodeljefe/kube-js.svg?branch=master)](https://travis-ci.org/eljefedelrodeodeljefe/kube-js)
 
 Simplified, lightweight [Kubernetes API](http://kubernetes.io/) client with some useful extensions for Nod.js.
 
