@@ -1,6 +1,6 @@
 # kube-js
 
-[![Build Status](https://travis-ci.org/eljefeldelrodeodeljefe/kubernetes-client.svg?branch=master)](https://travis-ci.org/eljefeldelrodeodeljefe/kubernetes-client)
+[![Build Status](https://travis-ci.org/eljefeldelrodeodeljefe/kube-js.svg?branch=master)](https://travis-ci.org/eljefeldelrodeodeljefe/kube-js)
 
 Simplified, lightweight [Kubernetes API](http://kubernetes.io/) client with some useful extensions for Nod.js.
 
@@ -14,18 +14,18 @@ $ npm i kube-js --save
 
 ## Examples
 
-kubernetes-client provides access to all the Kubernetes objects and
+`kube-js` provides access to all the Kubernetes objects and
 includes some niceties for writing simpler code.
 
 ### Basics
 
-kubernetes-client maps the URI paths in the Kubernetes API to
+`kube-js` maps the URI paths in the Kubernetes API to
 sequences of objects chained together via properties and ending in a
 function. For example, to GET the `ReplicationController` named
 'http-rc' in the `Namespace` 'my-project':
 
 ```js
-const Api = require('kubernetes-client');
+const Api = require('kube-js');
 const core = new Api.Core({
   url: 'http://my-k8s-api-server.com',
   version: 'v1',  // Defaults to 'v1'
@@ -39,7 +39,7 @@ function print(err, result) {
 core.namespaces.replicationcontrollers('http-rc').get(print);
 ```
 
-kubernetes-client supports the Extensions API group. For example, GET
+`kube-js` supports the Extensions API group. For example, GET
 the `Deployment` named `http-deployment`:
 
 ```js
@@ -52,23 +52,23 @@ const ext = new Api.Extensions({
 ext.namespaces.deployments('http-deployment').get(print);
 ```
 
-kubernetes-client provides a helper to get in-cluster config and accessing the API from a Pod:
+`kube-js` provides a helper to get in-cluster config and accessing the API from a Pod:
 
 ```js
-const Api = require('kubernetes-client');
+const Api = require('kube-js');
 const core = new Api.Core(Api.config.getInCluster());
 ```
 
 and a helper to get the current-context config from `~/.kube/config`:
 
 ```js
-const Api = require('kubernetes-client');
+const Api = require('kube-js');
 const core = new Api.Core(Api.config.fromKubeconfig());
 ```
 
 ### Creating and updating
 
-kubernetes-client objects expose `.post`, `.patch`, and `.put`
+`kube-js` objects expose `.post`, `.patch`, and `.put`
 methods. Create the ReplicationController from the example above:
 
 ```js
@@ -86,11 +86,11 @@ core.namespaces.replicationcontrollers('http-rc').patch({
 
 ### Using the correct API group and version
 
-kubernetes-client client includes functionality to help determine the
+`kube-js` client includes functionality to help determine the
 correct Kubernetes API group and version to use based on manifests:
 
 ```js
-const Api = require('kubernetes-client');
+const Api = require('kube-js');
 const api = new Api.Api({
   url: 'http://my-k8s-api-server.com',
   namespace: 'my-project'
@@ -113,7 +113,7 @@ api.group(manifest1).ns.kind(manifest1).post({ body: manifest1 }, print);
 
 ### Object name aliases
 
-kubernetes-client supports the same aliases as
+`kube-js` supports the same aliases as
 [`kubectl`](http://kubernetes.io/docs/user-guide/kubectl-overview/)
 (*e.g.*, `ns` for `namespaces`) and the singular versions of the
 resource name (*e.g.*, `namespace` for `namespaces`). We can shorten
@@ -134,7 +134,7 @@ core.ns('other-project').rc('http-rc').get(print);
 ### Query parameters
 
 You can optionally specify query string object `qs` to GET
-endpoints. kubernetes-client passes `qs` directly to
+endpoints. `kube-js` passes `qs` directly to
 [`request`](https://www.npmjs.com/package/request#requestoptions-callback).
 For example to filter based on [label
 selector](http://kubernetes.io/docs/user-guide/labels/):
@@ -145,7 +145,7 @@ core.ns.rc.get({ qs: { labelSelector: 'service=http' } }, print);
 
 ### Label selector filtering
 
-kubernetes-client has a shortcut, `matchLabels`, for filtering on label
+`kube-js` has a shortcut, `matchLabels`, for filtering on label
 selector equality:
 
 ```js
@@ -170,7 +170,7 @@ core.ns.rc.match([{
 
 You can extend the Kubernetes API using a
 [ThirdPartyResource](https://kubernetes.io/docs/user-guide/thirdpartyresources/)
-and kubernetes-client:
+and `kube-js`:
 
 ```js
 const newResoure = {
@@ -206,14 +206,14 @@ thirdPartyResources.ns.newresources.get(print);
 
 ### ReplicationController Pods
 
-kubernetes-client provides a shortcut for listing all Pods matching a
+`kube-js` provides a shortcut for listing all Pods matching a
 ReplicationController selector:
 
 ```js
 core.ns.rc.po.get(print);
 ```
 
-kubernetes-client deletes all the Pods associated with a
+`kube-js` deletes all the Pods associated with a
 ReplicationController when it deletes the ReplicationController. You
 can preserve the Pods:
 
@@ -248,12 +248,12 @@ stream.on('data', chunk => {
 **Note:** the kube-apiserver will close watch connections eventually
 according to the
 [`--min-request-timeout`](http://kubernetes.io/docs/admin/kube-apiserver/
-command line argument. kubernetes-client does not attempt to reconnect
+command line argument. `kube-js` does not attempt to reconnect
 when the kube-apiserver closes a connection.
 
 ### Authenticating
 
-kubernetes-client supports Kubernetes [apiserver
+`kube-js` supports Kubernetes [apiserver
 authentication](http://kubernetes.io/docs/admin/authentication/).
 
 Basic authentication (with optional certificate authority):
@@ -306,11 +306,11 @@ const core = new Api.Core({
 
 ### Passing options to `request`
 
-kubernetes-client uses
+`kube-js` uses
 [`request`](https://github.com/request/request). You can specify
 [`request`
 options](https://github.com/request/request#requestoptions-callback)
-for kubernetes-client to pass to `request`:
+for `kube-js` to pass to `request`:
 
 ```js
 const core = new Api.Core({
@@ -323,7 +323,7 @@ const core = new Api.Core({
 
 ## Testing
 
-kubernetes-client includes unit tests and integration tests.
+`kube-js` includes unit tests and integration tests.
 [Minikube](https://github.com/kubernetes/minikube) is a tool that
 makes it easy to run integration tests locally.
 
