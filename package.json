@@ -1,6 +1,6 @@
 {
   "name": "kube-js",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Simplified, lightweight Kubernetes API client with some useful extensions.",
   "main": "lib/index.js",
   "scripts": {
