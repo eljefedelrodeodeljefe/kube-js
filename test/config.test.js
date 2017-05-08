@@ -1,21 +1,21 @@
-'use strict';
-/* eslint no-process-env: 0*/
+'use strict'
+/* eslint no-process-env: 0 */
 
-const assume = require('assume');
-const sinon = require('sinon');
-const fs = require('fs');
+const assume = require('assume')
+const sinon = require('sinon')
+const fs = require('fs')
 
-const config = require('../lib/config');
+const config = require('../lib/config')
 
 describe('Config', () => {
   let sandbox
 
   beforeEach(() => {
-    sandbox = sinon.sandbox.create();
+    sandbox = sinon.sandbox.create()
   })
 
   afterEach(() => {
-    sandbox.restore();
+    sandbox.restore()
   })
 
   describe('getInCluster', () => {
@@ -41,15 +41,15 @@ describe('Config', () => {
         .withArgs('/var/run/secrets/kubernetes.io/serviceaccount/namespace')
         .returns('my-namespace')
 
-      const configInCluster = config.getInCluster();
+      const configInCluster = config.getInCluster()
       assume(configInCluster).eqls({
         auth: { bearer: 'my-token' },
         ca: 'my-ca',
         namespace: 'my-namespace',
         url: 'https://myhost:443'
-      });
-    });
-  });
+      })
+    })
+  })
 
   describe('.fromKubeconfig', () => {
     it('handles username and password', () => {
@@ -84,11 +84,11 @@ describe('Config', () => {
             }
           }
         ]
-      };
-      const args = config.fromKubeconfig(kubeconfig);
-      assume(args.auth.user).equals('foo-user');
-      assume(args.auth.pass).equals('foo-password');
-    });
+      }
+      const args = config.fromKubeconfig(kubeconfig)
+      assume(args.auth.user).equals('foo-user')
+      assume(args.auth.pass).equals('foo-password')
+    })
 
     it('handles base64 encoded certs and keys', () => {
       const kubeconfig = {
@@ -123,12 +123,12 @@ describe('Config', () => {
             }
           }
         ]
-      };
-      const args = config.fromKubeconfig(kubeconfig);
-      assume(args.ca).equals('certificate-authority-data');
-      assume(args.key).equals('client-key');
-      assume(args.cert).equals('client-certificate');
-    });
+      }
+      const args = config.fromKubeconfig(kubeconfig)
+      assume(args.ca).equals('certificate-authority-data')
+      assume(args.key).equals('client-key')
+      assume(args.cert).equals('client-certificate')
+    })
 
     it('handles token', () => {
       const kubeconfig = {
@@ -161,10 +161,10 @@ describe('Config', () => {
             }
           }
         ]
-      };
-      const args = config.fromKubeconfig(kubeconfig);
-      assume(args.auth.bearer).equals('foo-token');
-    });
+      }
+      const args = config.fromKubeconfig(kubeconfig)
+      assume(args.auth.bearer).equals('foo-token')
+    })
 
     it('handles manually specified current-context', () => {
       const kubeconfig = {
@@ -210,9 +210,9 @@ describe('Config', () => {
             }
           }
         ]
-      };
-      const args = config.fromKubeconfig(kubeconfig, 'foo-context-2');
-      assume(args.url).equals('https://192.168.42.122:8443');
-    });
-  });
-});
+      }
+      const args = config.fromKubeconfig(kubeconfig, 'foo-context-2')
+      assume(args.url).equals('https://192.168.42.122:8443')
+    })
+  })
+})

@@ -1,11 +1,11 @@
-'use strict';
+'use strict'
 
-const assume = require('assume');
-const async = require('async');
-const nock = require('nock');
+const assume = require('assume')
+const async = require('async')
+const nock = require('nock')
 
-const common = require('./common');
-const beforeTesting = common.beforeTesting;
+const common = require('./common')
+const beforeTesting = common.beforeTesting
 
 const testRbac = {
   kind: 'Role',
@@ -18,19 +18,19 @@ const testRbac = {
     resources: ['pods'],
     verbs: ['get', 'watch', 'list']
   }]
-};
+}
 
 describe('lib.rbac', () => {
   describe('.Rbac', () => {
-    const testRbacName = testRbac.metadata.name;
+    const testRbacName = testRbac.metadata.name
 
     beforeTesting('unit', () => {
       nock(common.rbac.url)
-        .post(`${ common.rbac.path }/namespaces/${ common.currentName }/roles`)
+        .post(`${common.rbac.path}/namespaces/${common.currentName}/roles`)
         .reply(201, testRbac)
-        .get(`${ common.rbac.path }/namespaces/${ common.currentName }/roles/${ testRbacName }`)
-        .reply(200, testRbac);
-    });
+        .get(`${common.rbac.path}/namespaces/${common.currentName}/roles/${testRbacName}`)
+        .reply(200, testRbac)
+    })
 
     // NOTE: Running only unit tests. Setting up RBAC is more involved, and it
     // makes it cumbersome to run the other integration tests. We need
@@ -40,11 +40,11 @@ describe('lib.rbac', () => {
         next => common.rbac.ns.roles.post({ body: testRbac }, next),
         next => common.rbac.ns.roles.get(testRbacName, next)
       ], (err, results) => {
-        assume(err).is.falsy();
-        const getResult = results[1];
-        assume(getResult.metadata.name).is.equal(testRbacName);
-        done();
-      });
-    });
-  });
-});
+        assume(err).is.falsy()
+        const getResult = results[1]
+        assume(getResult.metadata.name).is.equal(testRbacName)
+        done()
+      })
+    })
+  })
+})
