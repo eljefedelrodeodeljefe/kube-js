@@ -11,7 +11,8 @@
     "jscs": "standard lib/ test/",
     "lint": "standard lib/ test/",
     "test": "mocha",
-    "test-integration": "TESTING=int mocha -t ${TIMEOUT:-30000} test"
+    "test-integration": "TESTING=int mocha -t ${TIMEOUT:-30000} test",
+    "postversion": "TAG=$(echo $(git describe --tags $(git rev-list --tags --max-count=1))) && git tag -a $TAG $TAG -f -m \"$(git log `git describe --tags --abbrev=0 HEAD^`..HEAD --oneline)\" && git push && git push --tags"
   },
   "repository": "eljefeldelrodeodeljefe/kubernetes-client",
   "keywords": [
