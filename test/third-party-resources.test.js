@@ -1,5 +1,5 @@
 /* eslint max-nested-callbacks:0 */
-'use strict'
+/* eslint-env mocha */
 
 const assume = require('assume')
 const async = require('async')
@@ -51,8 +51,8 @@ function createNewResource (cb) {
   })
 }
 
-global.describe('lib.ThirdPartyResource', () => {
-  global.describe('.addResource', () => {
+describe('lib.ThirdPartyResource', () => {
+  describe('.addResource', () => {
     only('unit', 'adds a BaseObject globally and to default namespace', () => {
       common.thirdPartyResources.addResource('newresources')
       assume(common.thirdPartyResources.newresources).is.truthy()
@@ -60,7 +60,7 @@ global.describe('lib.ThirdPartyResource', () => {
     })
   })
 
-  global.describe('.newresources', () => {
+  describe('.newresources', () => {
     beforeTesting('int', done => {
       createNewResource(done)
     })
@@ -68,15 +68,14 @@ global.describe('lib.ThirdPartyResource', () => {
       common.extensions.thirdpartyresources.delete(newResource.metadata.name, done)
     })
 
-    global.describe('.get', () => {
+    describe('.get', () => {
       beforeTesting('unit', () => {
         nock(common.thirdPartyResources.url)
           .get(`${common.thirdPartyResources.path}/newresources`)
           .reply(200, { kind: 'NewResourceList' })
       })
 
-      global.it('returns NewSourceList', done => {
-        common.thirdPartyResources.addResource('newresources')
+      it('returns NewSourceList', done => {
         common.thirdPartyResources.newresources.get((err, results) => {
           assume(err).is.falsy()
           assume(results.kind).is.equal('NewResourceList')
@@ -85,7 +84,7 @@ global.describe('lib.ThirdPartyResource', () => {
       })
     })
 
-    global.describe('.post', () => {
+    describe('.post', () => {
       beforeTesting('unit', () => {
         nock(common.thirdPartyResources.url)
           .post(`/apis/${common.thirdPartyDomain}/v1/namespaces/${common.currentName}/newresources`)
@@ -94,7 +93,7 @@ global.describe('lib.ThirdPartyResource', () => {
           .reply(200, { metadata: { name: 'test' } })
       })
 
-      global.it('creates a resources', done => {
+      it('creates a resources', done => {
         common.thirdPartyResources
           .ns
           .newresources

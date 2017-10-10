@@ -1,4 +1,4 @@
-'use strict'
+/* eslint-env mocha */
 
 const assume = require('assume')
 const async = require('async')
@@ -32,8 +32,8 @@ const testJob = {
   }
 }
 
-global.describe('lib.batch', () => {
-  global.describe('.jobs', () => {
+describe('lib.batch', () => {
+  describe('.jobs', () => {
     const testJobName = testJob.metadata.name
 
     beforeTesting('int', common.changeName)
@@ -45,7 +45,7 @@ global.describe('lib.batch', () => {
         .reply(200, testJob)
     })
 
-    global.it('can POST and GET', done => {
+    it('can POST and GET', done => {
       async.series([
         next => common.batch.ns.jobs.post({ body: testJob }, next),
         next => common.batch.ns.jobs.get(testJobName, next)

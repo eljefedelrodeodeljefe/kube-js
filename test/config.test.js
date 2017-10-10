@@ -1,4 +1,4 @@
-'use strict'
+/* eslint-env mocha */
 /* eslint no-process-env: 0 */
 
 const assume = require('assume')
@@ -54,11 +54,11 @@ describe('Config', () => {
   describe('.fromKubeconfig', () => {
     it('handles username and password', () => {
       const kubeconfig = {
-        apiVersion: 'v1',
-        kind: 'Config',
-        preferences: {},
+        'apiVersion': 'v1',
+        'kind': 'Config',
+        'preferences': {},
         'current-context': 'foo-context',
-        contexts: [
+        'contexts': [
           {
             name: 'foo-context',
             context: {
@@ -67,7 +67,7 @@ describe('Config', () => {
             }
           }
         ],
-        clusters: [
+        'clusters': [
           {
             name: 'foo-cluster',
             cluster: {
@@ -75,7 +75,7 @@ describe('Config', () => {
             }
           }
         ],
-        users: [
+        'users': [
           {
             name: 'foo-user',
             user: {
@@ -92,11 +92,11 @@ describe('Config', () => {
 
     it('handles base64 encoded certs and keys', () => {
       const kubeconfig = {
-        apiVersion: 'v1',
-        kind: 'Config',
-        preferences: {},
+        'apiVersion': 'v1',
+        'kind': 'Config',
+        'preferences': {},
         'current-context': 'foo-context',
-        contexts: [
+        'contexts': [
           {
             name: 'foo-context',
             context: {
@@ -105,21 +105,21 @@ describe('Config', () => {
             }
           }
         ],
-        clusters: [
+        'clusters': [
           {
             name: 'foo-cluster',
             cluster: {
-              'certificate-authority-data': new Buffer('certificate-authority-data').toString('base64'),
-              server: 'https://192.168.42.121:8443'
+              'certificate-authority-data': Buffer.from('certificate-authority-data').toString('base64'),
+              'server': 'https://192.168.42.121:8443'
             }
           }
         ],
-        users: [
+        'users': [
           {
             name: 'foo-user',
             user: {
-              'client-certificate-data': new Buffer('client-certificate').toString('base64'),
-              'client-key-data': new Buffer('client-key').toString('base64')
+              'client-certificate-data': Buffer.from('client-certificate').toString('base64'),
+              'client-key-data': Buffer.from('client-key').toString('base64')
             }
           }
         ]
@@ -132,11 +132,11 @@ describe('Config', () => {
 
     it('handles token', () => {
       const kubeconfig = {
-        apiVersion: 'v1',
-        kind: 'Config',
-        preferences: {},
+        'apiVersion': 'v1',
+        'kind': 'Config',
+        'preferences': {},
         'current-context': 'foo-context',
-        contexts: [
+        'contexts': [
           {
             name: 'foo-context',
             context: {
@@ -145,7 +145,7 @@ describe('Config', () => {
             }
           }
         ],
-        clusters: [
+        'clusters': [
           {
             name: 'foo-cluster',
             cluster: {
@@ -153,7 +153,7 @@ describe('Config', () => {
             }
           }
         ],
-        users: [
+        'users': [
           {
             name: 'foo-user',
             user: {
@@ -166,13 +166,53 @@ describe('Config', () => {
       assume(args.auth.bearer).equals('foo-token')
     })
 
+    it('handles auth-provider.config.access-token', () => {
+      const kubeconfig = {
+        'apiVersion': 'v1',
+        'kind': 'Config',
+        'preferences': {},
+        'current-context': 'foo-context',
+        'contexts': [
+          {
+            name: 'foo-context',
+            context: {
+              cluster: 'foo-cluster',
+              user: 'foo-user'
+            }
+          }
+        ],
+        'clusters': [
+          {
+            name: 'foo-cluster',
+            cluster: {
+              server: 'https://192.168.42.121:8443'
+            }
+          }
+        ],
+        'users': [
+          {
+            name: 'foo-user',
+            user: {
+              'auth-provider': {
+                config: {
+                  'access-token': 'foo-token'
+                }
+              }
+            }
+          }
+        ]
+      }
+      const args = config.fromKubeconfig(kubeconfig)
+      assume(args.auth.bearer).equals('foo-token')
+    })
+
     it('handles manually specified current-context', () => {
       const kubeconfig = {
-        apiVersion: 'v1',
-        kind: 'Config',
-        preferences: {},
+        'apiVersion': 'v1',
+        'kind': 'Config',
+        'preferences': {},
         'current-context': 'foo-context-1',
-        contexts: [
+        'contexts': [
           {
             name: 'foo-context-1',
             context: {
@@ -188,7 +228,7 @@ describe('Config', () => {
             }
           }
         ],
-        clusters: [
+        'clusters': [
           {
             name: 'foo-cluster-1',
             cluster: {
@@ -202,7 +242,7 @@ describe('Config', () => {
             }
           }
         ],
-        users: [
+        'users': [
           {
             name: 'foo-user',
             user: {

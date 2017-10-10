@@ -1,13 +1,13 @@
-# kube-js [![Build Status](https://travis-ci.org/eljefedelrodeodeljefe/kube-js.svg?branch=master)](https://travis-ci.org/eljefedelrodeodeljefe/kube-js)
+# kube-js [![codecov](https://codecov.io/gh/eljefedelrodeodeljefe/kube-js/branch/master/graph/badge.svg)](https://codecov.io/gh/eljefedelrodeodeljefe/kube-js) [![Build Status](https://travis-ci.org/eljefedelrodeodeljefe/kube-js.svg?branch=master)](https://travis-ci.org/eljefedelrodeodeljefe/kube-js)
 
-Simplified, lightweight [Kubernetes API](http://kubernetes.io/) client with some useful extensions for Nod.js.
+Simplified [Kubernetes API](http://kubernetes.io/) client for Node.js.
 
 ## Installation
 
 Install via npm:
 
 ```console
-$ npm i kube-js --save
+npm i kube-js --save
 ```
 
 ## Examples
@@ -37,7 +37,7 @@ function print(err, result) {
 core.namespaces.replicationcontrollers('http-rc').get(print);
 ```
 
-`kube-js` supports the Extensions API group. For example, GET
+`kube-js `supports the Extensions API group. For example, GET
 the `Deployment` named `http-deployment`:
 
 ```js
@@ -64,22 +64,60 @@ const Api = require('kube-js');
 const core = new Api.Core(Api.config.fromKubeconfig());
 ```
 
+### **Experimental** support for promises and async/await
+
+`kube-js` exposes **experimental** support for promises via
+the `promises` option passed to API group constructors. The API is the
+same, except for the functions that previously took a callback
+(*e.g.*, `.get`). Those functions now return a promise.
+
+```js
+// Notice the promises: true
+const core = new Api.Core({
+  url: 'http://my-k8s-api-server.com',
+  version: 'v1',  // Defaults to 'v1'
+  promises: true,  // Enable promises
+  namespace: 'my-project' // Defaults to 'default'
+})
+```
+
+and then:
+
+```js
+core.namespaces.replicationcontrollers('http-rc').get()
+  .then(result => print(null, result))
+```
+
+or with `async/await`:
+
+```js
+print(null, await core.namespaces.replicationcontrollers('http-rc').get())
+```
+
+You can invoke promise-based and callback-based functions explictly:
+
+```js
+print(null, await core.namespaces.replicationcontrollers('http-rc').getPromise())
+core.namespaces.replicationcontrollers('http-rc').getCb(print)
+```
+
 ### Creating and updating
 
-`kube-js` objects expose `.post`, `.patch`, and `.put`
+kube-js objects expose `.post`, `.patch`, and `.put`
 methods. Create the ReplicationController from the example above:
 
 ```js
-const manifestObject = require('./rc.json');
-core.namespaces.replicationcontrollers.post({ body: manifestObject }, print);
+const manifestObject = require('./rc.json')
+core.namespaces.replicationcontrollers.post({ body: manifestObject }, print)
 ```
+
 or update the number of replicas:
 
 ```js
 const patch = { spec: { replicas: 10 } };
 core.namespaces.replicationcontrollers('http-rc').patch({
   body: patch
-}, print);
+}, print)
 ```
 
 ### Using the correct API group and version
@@ -132,18 +170,18 @@ core.ns('other-project').rc('http-rc').get(print);
 ### Query parameters
 
 You can optionally specify query string object `qs` to GET
-endpoints. `kube-js` passes `qs` directly to
+endpoints. kube-js passes `qs` directly to
 [`request`](https://www.npmjs.com/package/request#requestoptions-callback).
 For example to filter based on [label
 selector](http://kubernetes.io/docs/user-guide/labels/):
 
 ```js
-core.ns.rc.get({ qs: { labelSelector: 'service=http' } }, print);
+core.ns.rc.get({ qs: { labelSelector: 'service=http,component=api' } }, print)
 ```
 
 ### Label selector filtering
 
-`kube-js` has a shortcut, `matchLabels`, for filtering on label
+kube-js has a shortcut, `matchLabels`, for filtering on label
 selector equality:
 
 ```js
@@ -168,14 +206,14 @@ core.ns.rc.match([{
 
 You can extend the Kubernetes API using a
 [ThirdPartyResource](https://kubernetes.io/docs/user-guide/thirdpartyresources/)
-and `kube-js`:
+and kube-js:
 
 ```js
 const newResoure = {
   apiVersion: 'extensions/v1beta1',
   kind: 'ThirdPartyResource',
   metadata: {
-    name: 'new-resource.kubernetes-client.io'
+    name: 'new-resource.kube-js.io'
   },
   description: 'Example resource',
   versions: [{
@@ -191,7 +229,7 @@ and then extend an `ThirdPartyResource` API client with your new resources:
 ```js
 const thirdPartyResources = new Api.ThirdPartyResources({
   url: 'http://my-k8s-api-server.com',
-  group: 'kubernetes-client.io',
+  group: 'kube-js.io',
   resources: ['customresources']  // Notice pluralization!
 });
 
@@ -216,30 +254,29 @@ ReplicationController when it deletes the ReplicationController. You
 can preserve the Pods:
 
 ```js
-core.ns.rc.delete({ name: 'http-rc', preservePods: true });
+core.ns.rc.delete({ name: 'http-rc', preservePods: true }, print)
 ```
 
 ### Watching and streaming
 
-If you don't pass a callback to `get`, node-kubernetes returns a
-stream.  This is useful for watching:
+You can call `.getStream` to stream results. This is useful for watching:
 
 ```js
-const JSONStream = require('json-stream');
-const jsonStream = new JSONStream();
+const JSONStream = require('json-stream')
+const jsonStream = new JSONStream()
 
-const stream = core.ns.po.get({ qs: { watch: true } });
+const stream = core.ns.po.getStream({ qs: { watch: true } })
 stream.pipe(jsonStream);
 jsonStream.on('data', object => {
-  console.log('Pod:', JSON.stringify(object, null, 2));
-});
+  console.log('Pod:', JSON.stringify(object, null, 2))
+})
 ```
 
 You can access logs in a similar fashion:
 ```js
-const stream = core.ns.po.log({ name: 'http-123', qs: { follow: true } });
+const stream = core.ns.po('http-123').log.getStream({ qs: { follow: true } })
 stream.on('data', chunk => {
-  process.stdout.write(chunk.toString());
+  process.stdout.write(chunk.toString())
 });
 ```
 
@@ -304,11 +341,10 @@ const core = new Api.Core({
 
 ### Passing options to `request`
 
-`kube-js` uses
+kube-js uses
 [`request`](https://github.com/request/request). You can specify
-[`request`
-options](https://github.com/request/request#requestoptions-callback)
-for `kube-js` to pass to `request`:
+[`request` options](https://github.com/request/request#requestoptions-callback)
+for kube-js to pass to `request`:
 
 ```js
 const core = new Api.Core({
@@ -328,7 +364,7 @@ makes it easy to run integration tests locally.
 Run the unit tests:
 
 ```console
-$ npm test
+npm test
 ```
 
 The integration tests use a running Kubernetes server. You specify the
@@ -336,7 +372,7 @@ Kubernetes server context via the `CONTEXT` environment variable. For
 example, run the integration tests with the `minikube` context:
 
 ```console
-$ CONTEXT=minikube npm run test-integration
+CONTEXT=minikube npm run test-integration
 ```
 
 ## More Documentation

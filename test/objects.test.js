@@ -1,5 +1,5 @@
 /* eslint max-nested-callbacks:0 */
-'use strict'
+/* eslint-env mocha */
 const assume = require('assume')
 const nock = require('nock')
 const ReplicationControllers = require('../lib/replicationcontrollers')
@@ -110,9 +110,9 @@ describe('objects', function () {
     only('unit', 'GETs PodList', function (done) {
       nock200()
       rcs().po.get({ name: 'foo' }, (err, results) => {
+        assume(err).is.falsy()
         const rc = results.rc
         const podList = results.podList
-        assume(err).is.falsy()
         assume(rc.kind).is.equal('replicationcontroller')
         assume(podList.kind).is.equal('podlist')
         done()
@@ -130,7 +130,6 @@ describe('objects', function () {
     function nock200 () {
       return nock(_url)
         .patch(`${_rcs}/foo`)
-        .matchHeader('content-type', 'application/strategic-merge-patch+json')
         .reply(200, {})
         .delete(`${_rcs}/foo`)
         .reply(200, {})
