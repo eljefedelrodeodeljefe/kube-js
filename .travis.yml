@@ -13,4 +13,4 @@ install:
 
 script:
   - npm test
-  - codecov
+  - npm run cover

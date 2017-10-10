@@ -10,6 +10,7 @@
     "lint": "standard --fix --env mocha",
     "release": "standard-version --tag-prefix=''",
     "test": "npm run lint && nyc mocha",
+    "cover": "nyc report --reporter=lcov > coverage.lcov && codecov",
     "test-integration": "TESTING=int mocha -t ${TIMEOUT:-30000} test",
     "postversion": "TAG=$(echo $(git describe --tags $(git rev-list --tags --max-count=1))) && git tag -a $TAG $TAG -f -m \"$(git log `git describe --tags --abbrev=0 HEAD^`..HEAD --oneline)\" && git push && git push --tags"
   },
