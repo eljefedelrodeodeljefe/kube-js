@@ -1,4 +1,4 @@
-# kube-js
+# kube-js [![codecov](https://codecov.io/gh/eljefedelrodeodeljefe/kube-js/branch/master/graph/badge.svg)](https://codecov.io/gh/eljefedelrodeodeljefe/kube-js) [![Build Status](https://travis-ci.org/eljefedelrodeodeljefe/kube-js.svg?branch=master)](https://travis-ci.org/eljefedelrodeodeljefe/kube-js)
 
 Simplified [Kubernetes API](http://kubernetes.io/) client for Node.js.
 
