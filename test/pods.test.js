@@ -1,4 +1,5 @@
-'use strict'
+/* eslint max-nested-callbacks:0 */
+/* eslint-env mocha */
 
 const assume = require('assume')
 const nock = require('nock')
@@ -23,7 +24,7 @@ const testPod = {
   }
 }
 
-const testPatch = {
+const testStrategicMergePatch = {
   metadata: {
     name: 'test-pod'
   },
@@ -34,6 +35,12 @@ const testPatch = {
         name: 'test'
       }
     ]
+  }
+}
+
+const testMergePatch = {
+  spec: {
+    activeDeadlineSeconds: 100
   }
 }
 
@@ -59,27 +66,75 @@ describe('lib.pods', () => {
   })
 
   describe('.patch', () => {
-    beforeTesting('int', done => {
-      common.changeName(err => {
-        assume(err).is.falsy()
-        common.api.ns.pods.post({ body: testPod }, (postErr, pod) => {
-          assume(postErr).is.falsy()
+    describe('.strategic-merge-patch+json', () => {
+      beforeTesting('int', done => {
+        common.changeName(err => {
+          assume(err).is.falsy()
+          common.api.ns.pods.post({ body: testPod }, postErr => {
+            assume(postErr).is.falsy()
+            done()
+          })
+        })
+      })
+      beforeTestingEach('unit', () => {
+        nock(common.api.url)
+          .patch(`/api/v1/namespaces/${common.currentName}/pods/test-pod`)
+          .reply(200, Object.assign({ kind: 'Pod' }, testStrategicMergePatch))
+      })
+
+      it('succeeds at updating a pod', done => {
+        common.api.ns.pods('test-pod').patch({ body: testStrategicMergePatch }, (err, pod) => {
+          assume(err).is.falsy()
+          assume(pod.metadata.name).is.equal('test-pod')
+          assume(pod.spec.containers[0].image).is.equal('still-does-not-matter:latest')
           done()
         })
       })
     })
-    beforeTestingEach('unit', () => {
-      nock(common.api.url)
-        .patch(`/api/v1/namespaces/${common.currentName}/pods/test-pod`)
-        .reply(200, Object.assign({ kind: 'Pod' }, testPatch))
-    })
 
-    it('succeeds at updating a pod', done => {
-      common.api.ns.pods('test-pod').patch({ body: testPatch }, (err, pod) => {
-        assume(err).is.falsy()
-        assume(pod.metadata.name).is.equal('test-pod')
-        assume(pod.spec.containers[0].image).is.equal('still-does-not-matter:latest')
-        done()
+    describe('.merge-patch+json', () => {
+      beforeTesting('int', done => {
+        common.changeName(err => {
+          assume(err).is.falsy()
+          common.api.ns.pods.post({ body: testPod }, postErr => {
+            assume(postErr).is.falsy()
+            done()
+          })
+        })
+      })
+      beforeTestingEach('unit', () => {
+        nock(common.api.url, { 'content-type': 'application/merge-patch+json' })
+          .patch(`/api/v1/namespaces/${common.currentName}/pods/test-pod`)
+          .reply(200, Object.assign({ kind: 'Pod' }, {
+            metadata: {
+              name: 'test-pod'
+            },
+            spec: {
+              activeDeadlineSeconds: 100
+            }
+          }))
+      })
+
+      it('succeeds at updating a pod', done => {
+        common.api.ns.pods('test-pod').patch({
+          body: testMergePatch,
+          headers: { 'content-type': 'application/merge-patch+json' }
+        }, (err, pod) => {
+          assume(err).is.falsy()
+          assume(pod.metadata.name).is.equal('test-pod')
+          assume(pod.spec.activeDeadlineSeconds).is.equal(100)
+          done()
+        })
+      })
+
+      only('int', 'fails at updating a pod if the patch is strategic', done => {
+        common.api.ns.pods('test-pod').patch({
+          body: testStrategicMergePatch,
+          headers: { 'content-type': 'application/merge-patch+json' }
+        }, err => {
+          assume(err).is.truthy()
+          done()
+        })
       })
     })
   })
@@ -103,6 +158,17 @@ describe('lib.pods', () => {
       common.api.ns.pods('test-pod').get((err, pod) => {
         assume(err).is.falsy()
         assume(pod.kind).is.equal('Pod')
+        done()
+      })
+    })
+    it('returns the Pod via a stream', done => {
+      const stream = common.api.ns.pods('test-pod').getStream()
+      const pieces = []
+      stream.on('data', data => pieces.push(data.toString()))
+      stream.on('error', err => assume(err).is.falsy())
+      stream.on('end', () => {
+        const object = JSON.parse(pieces.join(''))
+        assume(object.kind).is.equal('Pod')
         done()
       })
     })
