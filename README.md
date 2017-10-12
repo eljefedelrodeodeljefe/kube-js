@@ -23,18 +23,18 @@ function. For example, to GET the `ReplicationController` named
 'http-rc' in the `Namespace` 'my-project':
 
 ```js
-const Api = require('kube-js');
+const Api = require('kube-js')
 const core = new Api.Core({
   url: 'http://my-k8s-api-server.com',
   version: 'v1',  // Defaults to 'v1'
   namespace: 'my-project' // Defaults to 'default'
-});
+})
 
 function print(err, result) {
-  console.log(JSON.stringify(err || result, null, 2));
+  console.log(JSON.stringify(err || result, null, 2))
 }
 
-core.namespaces.replicationcontrollers('http-rc').get(print);
+core.namespaces.replicationcontrollers('http-rc').get(print)
 ```
 
 `kube-js `supports the Extensions API group. For example, GET
@@ -45,23 +45,23 @@ const ext = new Api.Extensions({
   url: 'http://my-k8s-api-server.com',
   version: 'v1beta1',  // Defaults to 'v1beta1'
   namespace: 'my-project' // Defaults to 'default'
-});
+})
 
-ext.namespaces.deployments('http-deployment').get(print);
+ext.namespaces.deployments('http-deployment').get(print)
 ```
 
 `kube-js` provides a helper to get in-cluster config and accessing the API from a Pod:
 
 ```js
-const Api = require('kube-js');
-const core = new Api.Core(Api.config.getInCluster());
+const Api = require('kube-js')
+const core = new Api.Core(Api.config.getInCluster())
 ```
 
 and a helper to get the current-context config from `~/.kube/config`:
 
 ```js
-const Api = require('kube-js');
-const core = new Api.Core(Api.config.fromKubeconfig());
+const Api = require('kube-js')
+const core = new Api.Core(Api.config.fromKubeconfig())
 ```
 
 ### **Experimental** support for promises and async/await
@@ -126,25 +126,25 @@ core.namespaces.replicationcontrollers('http-rc').patch({
 correct Kubernetes API group and version to use based on manifests:
 
 ```js
-const Api = require('kube-js');
+const Api = require('kube-js')
 const api = new Api.Api({
   url: 'http://my-k8s-api-server.com',
   namespace: 'my-project'
-});
+})
 
 const manifest0 = {
   kind: 'Deployment',
   apiVersion: 'extensions/v1beta1'
   ...
-};
+}
 const manifest1 = {
   kind: 'ReplicationController',
   apiVersion: 'v1'
   ...
-};
+}
 
-api.group(manifest0).ns.kind(manifest0).post({ body: manifest0 }, print);
-api.group(manifest1).ns.kind(manifest1).post({ body: manifest1 }, print);
+api.group(manifest0).ns.kind(manifest0).post({ body: manifest0 }, print)
+api.group(manifest1).ns.kind(manifest1).post({ body: manifest1 }, print)
 ```
 
 ### Object name aliases
@@ -156,7 +156,7 @@ resource name (*e.g.*, `namespace` for `namespaces`). We can shorten
 the example above:
 
 ```js
-core.ns.rc('http-rc').get(print);
+core.ns.rc('http-rc').get(print)
 ```
 
 ### Switching namespaces
@@ -164,7 +164,7 @@ core.ns.rc('http-rc').get(print);
 You can call the `namespace` object to specify the namespace:
 
 ```js
-core.ns('other-project').rc('http-rc').get(print);
+core.ns('other-project').rc('http-rc').get(print)
 ```
 
 ### Query parameters
@@ -185,7 +185,7 @@ kube-js has a shortcut, `matchLabels`, for filtering on label
 selector equality:
 
 ```js
-core.ns.rc.matchLabels({ service: 'http' }).get(print);
+core.ns.rc.matchLabels({ service: 'http' }).get(print)
 ```
 
 and a more general `match` method based on Kubernetes Match Expressions:
@@ -199,7 +199,7 @@ core.ns.rc.match([{
   key: 'deploy',
   operator: 'NotIn',
   values: ['production', 'staging']
-}]).get(print);
+}]).get(print)
 ```
 
 ### ThirdPartyResources
@@ -219,9 +219,9 @@ const newResoure = {
   versions: [{
     name: 'v1'
   }]
-};
+}
 
-ext.thirdpartyresources.post({ body: newResource }, print);
+ext.thirdpartyresources.post({ body: newResource }, print)
 ```
 
 and then extend an `ThirdPartyResource` API client with your new resources:
@@ -231,13 +231,13 @@ const thirdPartyResources = new Api.ThirdPartyResources({
   url: 'http://my-k8s-api-server.com',
   group: 'kube-js.io',
   resources: ['customresources']  // Notice pluralization!
-});
+})
 
 // Access `customresources` as if they were a regular Kubernetes object
-thirdPartyResources.ns.customresources.get(print);
-thirdPartyResources.addResource('newresources');  // Notice pluralization!
+thirdPartyResources.ns.customresources.get(print)
+thirdPartyResources.addResource('newresources')  // Notice pluralization!
 // Now access `newresources`
-thirdPartyResources.ns.newresources.get(print);
+thirdPartyResources.ns.newresources.get(print)
 ```
 
 ### ReplicationController Pods
@@ -246,7 +246,7 @@ thirdPartyResources.ns.newresources.get(print);
 ReplicationController selector:
 
 ```js
-core.ns.rc.po.get(print);
+core.ns.rc.po.get(print)
 ```
 
 `kube-js` deletes all the Pods associated with a
@@ -266,7 +266,7 @@ const JSONStream = require('json-stream')
 const jsonStream = new JSONStream()
 
 const stream = core.ns.po.getStream({ qs: { watch: true } })
-stream.pipe(jsonStream);
+stream.pipe(jsonStream)
 jsonStream.on('data', object => {
   console.log('Pod:', JSON.stringify(object, null, 2))
 })
@@ -277,7 +277,7 @@ You can access logs in a similar fashion:
 const stream = core.ns.po('http-123').log.getStream({ qs: { follow: true } })
 stream.on('data', chunk => {
   process.stdout.write(chunk.toString())
-});
+})
 ```
 
 **Note:** the kube-apiserver will close watch connections eventually
@@ -301,7 +301,7 @@ const core = new Api.Core({
     user: 'user',
     pass: 'pass'
   }
-});
+})
 ```
 
 or without a certificate authority:
@@ -314,7 +314,7 @@ const core = new Api.Core({
     user: 'user',
     pass: 'pass'
   }
-});
+})
 ```
 
 token authentication:
@@ -325,7 +325,7 @@ const core = new Api.Core({
   auth: {
     bearer: 'token'
   }
-});
+})
 ```
 
 and client certificate authentication:
@@ -336,7 +336,7 @@ const core = new Api.Core({
   ca: fs.readFileSync('cluster-ca.pem'),
   cert: fs.readFileSync('my-user-cert.pem'),
   key: fs.readFileSync('my-user-key.pem')
-});
+})
 ```
 
 ### Passing options to `request`
@@ -352,7 +352,7 @@ const core = new Api.Core({
   request: {
     timeout: 3000
   }
-});
+})
 ```
 
 ## Testing
